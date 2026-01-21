@@ -46,7 +46,6 @@ let listaItensPedido = []
 
 // função chamada quando se clica no botão ADICIONAR
 function adicionarItem() {
-    // obtendo os valores de entrada
     const tipoKit = document.getElementById('tipo').value;
     const medida = document.getElementById('medida').value;
     const quantidade = parseInt(document.getElementById('qtd').value);
@@ -70,8 +69,16 @@ function adicionarItem() {
 
         const qtdCaixas = quantidade / capacidade;
         
-        const descricaoItem = `${tipoKit} Nº${numeroOriginal} ${emendaOriginal === 'sim' ? 'C/' : 'S/'} Emenda`;
-        const idUnico = `${descricaoItem}-${medida}`;
+        // --- LOGICA DE SOMA POR CAIXA ---
+        // Primeiro, calculamos qual será o tamanho da caixa física
+        let tamanhoCaixaFisica = medida;
+        if (emendaOriginal === "sim") {
+            tamanhoCaixaFisica = (parseFloat(medida) / 2).toFixed(2);
+        }
+
+        // O ID agora é apenas o tamanho da caixa. 
+        // Ex: Todos os kits que resultarem em 1.50m cairão no mesmo ID.
+        const idUnico = tamanhoCaixaFisica;
 
         const itemExistente = listaItensPedido.find(item => item.id === idUnico);
 
@@ -80,23 +87,21 @@ function adicionarItem() {
         } else {
             listaItensPedido.push({
                 id: idUnico,
-                descricao: descricaoItem,
-                medida: medida,
+                medidaCaixa: tamanhoCaixaFisica,
                 caixas: qtdCaixas
             });
         }
 
-        console.log("Lista atualizada:", listaItensPedido);
-        atualizarInterface();
-
+        // Atualiza o parágrafo de feedback (seu "Último Item")
         const campoUltimoItem = document.querySelector('.ultimo_item');
-        campoUltimoItem.textContent = `Último item: ${tipoKit} Nº${numeroOriginal} - ${medida}m (${emendaOriginal === 'sim' ? 'Com' : 'Sem'} Emenda)`;
-        
+        campoUltimoItem.textContent = `Último item: ${tipoKit} Nº${numeroOriginal} - ${medida}m (${emendaOriginal === 'sim' ? 'C/' : 'S/'} Emenda)`;
+
+        atualizarInterface();
         document.getElementById('qtd').value = "";
 
     } catch (error) {
-        alert("Essa combinação de kit/medida/emenda não existe na tabela!");
-        console.error("Erro na busca:", tipoKit, numeroTecnico, emendaTecnica, medida);
+        alert("Essa combinação não existe na tabela!");
+        console.error(error);
     }
 }
 
@@ -109,17 +114,16 @@ function novoPedido() {
 
 function atualizarInterface() {
     const listaHtml = document.querySelector('.resultado');
-    listaHtml.innerHTML = "";
+    listaHtml.innerHTML = ""; 
+
+    // Ordenar a lista por tamanho de caixa (opcional, mas fica mais profissional)
+    listaItensPedido.sort((a, b) => a.medidaCaixa - b.medidaCaixa);
 
     listaItensPedido.forEach(item => {
         const li = document.createElement('li');
         
-        let medidaExibicao = item.medida;
-        if (item.descricao.includes("C/ Emenda")) {
-            medidaExibicao = (parseFloat(item.medida) / 2).toFixed(2);
-        }
-
-        li.textContent = `${item.caixas} caixa(s) de ${medidaExibicao}m`;
+        // Agora o texto foca no total de caixas por tamanho
+        li.textContent = `${item.caixas} caixa(s) de ${item.medidaCaixa} metros`;
         
         listaHtml.appendChild(li);
     });
