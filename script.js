@@ -108,10 +108,15 @@ function adicionarItem() {
 }
 
 function novoPedido() {
-    contaLinha = 0;
     listaItensPedido = [];
+    contaLinha = 0;
+
     document.querySelector('.resultado').innerHTML = ""; 
     document.getElementById('qtd').value = ""; 
+
+    document.querySelector('.contaLinha').textContent = `Última linha: ${contaLinha}`;
+    document.querySelector('.ultimo_item').textContent = "Último item: -";
+    
     alert("Pronto para um novo pedido!");
 }
 
