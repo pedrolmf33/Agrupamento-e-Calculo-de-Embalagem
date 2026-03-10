@@ -116,7 +116,8 @@ function novoPedido() {
 
 function atualizarInterface() {
     const listaHtml = document.querySelector('.resultado');
-    listaHtml.innerHTML = ""; 
+    listaHtml.innerHTML = "";
+    contaLinha = 0;
 
     // Ordenar a lista por tamanho de caixa (opcional, mas fica mais profissional)
     listaItensPedido.sort((a, b) => a.medidaCaixa - b.medidaCaixa);
