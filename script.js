@@ -43,6 +43,7 @@ const capacidadeCaixas = {
 
 // criando um array para armazenar os itens que for adicionando
 let listaItensPedido = []
+let contaLinha = 0;
 
 // função chamada quando se clica no botão ADICIONAR
 function adicionarItem() {
@@ -91,11 +92,12 @@ function adicionarItem() {
                 caixas: qtdCaixas
             });
         }
-
+        contaLinha += 1;
         // Atualiza o parágrafo de feedback (seu "Último Item")
         const campoUltimoItem = document.querySelector('.ultimo_item');
+        const campoContaLinha = document.querySelector('.contaLinha');
         campoUltimoItem.textContent = `Último item: ${tipoKit} Nº${numeroOriginal} - ${medida}m (${emendaOriginal === 'sim' ? 'C/' : 'S/'} Emenda)`;
-
+        campoContaLinha.textContent = `Última linha: ${contaLinha}`;
         atualizarInterface();
         document.getElementById('qtd').value = "";
 
